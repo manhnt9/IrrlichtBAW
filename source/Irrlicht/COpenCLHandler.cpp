@@ -14,6 +14,7 @@ clGetGLContextInfoKHR_fn COpenCLHandler::pClGetGLContextInfoKHR = NULL;
 cl_platform_id COpenCLHandler::platforms[IRR_MAX_OCL_PLATFORMS];
 cl_uint COpenCLHandler::actualPlatformCount = 0;
 COpenCLHandler::SOpenCLPlatformInfo COpenCLHandler::platformInformation[IRR_MAX_OCL_PLATFORMS];
+cl_context COpenCLHandler::openCLContext = 0;
 
 
 }

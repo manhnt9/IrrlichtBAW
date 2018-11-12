@@ -211,8 +211,10 @@ class COpenCLHandler
 
         static const SOpenCLPlatformInfo& getPlatformInfo(const size_t& ix) {return platformInformation[ix];}
 
+        static cl_context getOpenCLContext() {return openCLContext;}
+
 #ifdef _IRR_COMPILE_WITH_OPENGL_
-        static bool getCLDeviceFromGLContext(cl_device_id& outDevice,
+        static bool initOpenCL(cl_device_id& outDevice,
 #if defined(_IRR_WINDOWS_API_)
                                              const HGLRC& context, const HDC& hDC)
 #else
@@ -261,7 +263,10 @@ class COpenCLHandler
                 }
             }
 
-            return retval==CL_SUCCESS&&dummy>0;
+            if (!openCLContext)
+                openCLContext = clCreateContext(properties, 1, &outDevice, 0, 0, 0);
+
+            return retval == CL_SUCCESS && dummy>0 && openCLContext;
         }
 #endif // defined
 
@@ -273,6 +278,7 @@ class COpenCLHandler
         static cl_platform_id platforms[IRR_MAX_OCL_PLATFORMS];
         static cl_uint actualPlatformCount;
         static SOpenCLPlatformInfo platformInformation[IRR_MAX_OCL_PLATFORMS];
+        static cl_context openCLContext;
 };
 
 }
