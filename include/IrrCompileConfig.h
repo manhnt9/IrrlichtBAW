@@ -174,7 +174,7 @@
 define out. */
 #ifndef BAW_SERVER
 #define _IRR_COMPILE_WITH_OPENGL_
-///#define _IRR_COMPILE_WITH_OPENCL_
+#define _IRR_COMPILE_WITH_OPENCL_
 #endif
 
 #ifdef NO_IRR_COMPILE_WITH_OPENGL_
