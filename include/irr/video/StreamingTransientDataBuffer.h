@@ -143,7 +143,7 @@ class StreamingTransientDataBufferST : protected core::impl::FriendOfHeterogenou
                 DeferredFreeFunctor(core::HeterogenousMemoryAddressAllocatorAdaptor<BasicAddressAllocator,StreamingGPUBufferAllocator,CPUAllocator>* alloctr,
                                     size_type numAllocsToFree, const size_type* addrs, const size_type* bytes) : allocRef(alloctr), rangeData(nullptr), numAllocs(numAllocsToFree)
                 {
-                    rangeData = reinterpret_cast<size_type*>(getHostAllocator(*allocRef).allocate(sizeof(size_type)*numAllocs*2u,sizeof(size_type)));
+                    rangeData = reinterpret_cast<size_type*>(getHostAllocator(*allocRef).allocate(sizeof(size_type)*numAllocs*2u,sizeof(size_type))); // TODO : RobustPoolAllocator
                     memcpy(rangeData            ,addrs,sizeof(size_type)*numAllocs);
                     memcpy(rangeData+numAllocs  ,bytes,sizeof(size_type)*numAllocs);
                 }
@@ -156,14 +156,14 @@ class StreamingTransientDataBufferST : protected core::impl::FriendOfHeterogenou
                 ~DeferredFreeFunctor()
                 {
                     if (rangeData)
-                        getHostAllocator(*allocRef).deallocate(reinterpret_cast<typename CPUAllocator::pointer>(rangeData),sizeof(size_type)*numAllocs*2u);
+                        getHostAllocator(*allocRef).deallocate(reinterpret_cast<typename CPUAllocator::pointer>(rangeData),sizeof(size_type)*numAllocs*2u);// TODO : RobustPoolAllocator
                 }
 
                 DeferredFreeFunctor& operator=(const DeferredFreeFunctor& other) = delete;
                 inline DeferredFreeFunctor& operator=(DeferredFreeFunctor&& other)
                 {
                     if (rangeData)
-                        getHostAllocator(*allocRef).deallocate(reinterpret_cast<typename CPUAllocator::pointer>(rangeData),sizeof(size_type)*numAllocs*2u);
+                        getHostAllocator(*allocRef).deallocate(reinterpret_cast<typename CPUAllocator::pointer>(rangeData),sizeof(size_type)*numAllocs*2u);// TODO : RobustPoolAllocator
                     allocRef    = other.allocRef;
                     rangeData   = other.rangeData;
                     numAllocs   = other.numAllocs;
@@ -200,7 +200,7 @@ class StreamingTransientDataBufferST : protected core::impl::FriendOfHeterogenou
 
             private:
                 core::HeterogenousMemoryAddressAllocatorAdaptor<BasicAddressAllocator,StreamingGPUBufferAllocator,CPUAllocator>*    allocRef;
-                size_type*                                                                                                          rangeData;
+                size_type*                                                                                                          rangeData; // TODO : RobustPoolAllocator
                 size_type                                                                                                           numAllocs;
         };
         GPUEventDeferredHandlerST<DeferredFreeFunctor> deferredFrees;

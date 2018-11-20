@@ -12,11 +12,11 @@ namespace core
 static_assert(_IRR_MATRIX_ALIGNMENT>=_IRR_VECTOR_ALIGNMENT,"Matrix must be equally or more aligned than vector!");
 
 //! Equivalent of GLSL's mat4x3
-struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
+struct matrix3x4SIMD : private AllocationOverrideBase<_IRR_MATRIX_ALIGNMENT>
 {
 	core::vectorSIMDf rows[3];
 
-#define BUILD_MASKF(_x_, _y_, _z_, _w_) _mm_castsi128_ps(_mm_setr_epi32(_x_*0xffffffff, _y_*0xffffffff, _z_*0xffffffff, _w_*0xffffffff))
+#define BUILD_MASKF(_x_, _y_, _z_, _w_) _mm_setr_epi32(_x_*0xffffffff, _y_*0xffffffff, _z_*0xffffffff, _w_*0xffffffff)
 	explicit matrix3x4SIMD(const vectorSIMDf& _r0 = vectorSIMDf(1.f, 0.f, 0.f, 0.f), const vectorSIMDf& _r1 = vectorSIMDf(0.f, 1.f, 0.f, 0.f), const vectorSIMDf& _r2 = vectorSIMDf(0.f, 0.f, 1.f, 0.f))
 		: rows{_r0, _r1, _r2} {}
 
@@ -70,14 +70,18 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 	static inline matrix3x4SIMD concatenateBFollowedByA(const matrix3x4SIMD& _a, const matrix3x4SIMD& _b)
 	{
+    #ifdef _DEBUG
+        assert(_a.isPtrAlignedForThisType(&_a));
+        assert(_b.isPtrAlignedForThisType(&_b));
+    #endif // _DEBUG
 		__m128 r0 = _a.rows[0].getAsRegister();
 		__m128 r1 = _a.rows[1].getAsRegister();
 		__m128 r2 = _a.rows[2].getAsRegister();
 
 		matrix3x4SIMD out;
-		_mm_store_ps(out.rows[0].pointer, matrix3x4SIMD::doJob(r0, _b));
-		_mm_store_ps(out.rows[1].pointer, matrix3x4SIMD::doJob(r1, _b));
-		_mm_store_ps(out.rows[2].pointer, matrix3x4SIMD::doJob(r2, _b));
+		out.rows[0] = matrix3x4SIMD::doJob(r0, _b);
+		out.rows[1] = matrix3x4SIMD::doJob(r1, _b);
+		out.rows[2] = matrix3x4SIMD::doJob(r2, _b);
 
 		return out;
 	}
@@ -93,17 +97,17 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 		matrix3x4SIMD out;
 
-		const __m128 mask0011 = BUILD_MASKF(0, 0, 1, 1);
-
+		const __m128i mask0011 = BUILD_MASKF(0, 0, 1, 1);
+/*
 		__m128 second = _mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r00, r01, _b, false));
-		out.rows[0] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r00, r01, _b, true))) | _mm_and_ps(_mm_movelh_ps(second, second), mask0011);
+		out.rows[0] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r00, r01, _b, true))) | (vectorSIMDf(_mm_movelh_ps(second, second)) & mask0011);
 
 		second = _mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r10, r11, _b, false));
-		out.rows[1] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r10, r11, _b, true))) | _mm_and_ps(_mm_movelh_ps(second, second), mask0011);
+		out.rows[1] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r10, r11, _b, true))) | (vectorSIMDf(_mm_movelh_ps(second, second)) & mask0011);
 
 		second = _mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r20, r21, _b, false));
-		out.rows[2] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r20, r21, _b, true))) | _mm_and_ps(_mm_movelh_ps(second, second), mask0011);
-
+		out.rows[2] = vectorSIMDf(_mm_cvtpd_ps(matrix3x4SIMD::doJob_d(r20, r21, _b, true))) | (vectorSIMDf(_mm_movelh_ps(second, second)) & mask0011);
+*/
 		return out;
 	}
 
@@ -202,11 +206,16 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 	inline matrix3x4SIMD& setScale(const core::vectorSIMDf& _scale)
 	{
-		const vectorSIMDf mask0001 = BUILD_MASKF(0, 0, 0, 1);
+		const __m128i mask0001 = BUILD_MASKF(0, 0, 0, 1);
 
-		rows[0] = (_scale & BUILD_MASKF(1, 0, 0, 0)) | (rows[0] & mask0001);
-		rows[1] = (_scale & BUILD_MASKF(0, 1, 0, 0)) | (rows[1] & mask0001);
-		rows[2] = (_scale & BUILD_MASKF(0, 0, 1, 0)) | (rows[2] & mask0001);
+		const vectorSIMDu32& scaleAlias = reinterpret_cast<const vectorSIMDu32&>(_scale);
+
+		vectorSIMDu32& rowAlias0 = reinterpret_cast<vectorSIMDu32&>(rows[0]);
+		vectorSIMDu32& rowAlias1 = reinterpret_cast<vectorSIMDu32&>(rows[1]);
+		vectorSIMDu32& rowAlias2 = reinterpret_cast<vectorSIMDu32&>(rows[2]);
+		rowAlias0 = (scaleAlias & BUILD_MASKF(1, 0, 0, 0)) | (rowAlias0 & mask0001);
+		rowAlias1 = (scaleAlias & BUILD_MASKF(1, 0, 0, 0)) | (rowAlias1 & mask0001);
+		rowAlias2 = (scaleAlias & BUILD_MASKF(1, 0, 0, 0)) | (rowAlias2 & mask0001);
 
 		return *this;
 	}
@@ -274,7 +283,7 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 	inline void mulSub3x3With3x1(float* _out, const float* _in) const
 	{
-		vectorSIMDf mask1110 = BUILD_MASKF(1, 1, 1, 0);
+		__m128i mask1110 = BUILD_MASKF(1, 1, 1, 0);
 		vectorSIMDf vec(_in);
 		vectorSIMDf r0 = (rows[0] * vec) & mask1110,
 			r1 = (rows[1] * vec) & mask1110,
@@ -347,39 +356,39 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 	inline matrix3x4SIMD& setRotation(const core::quaternion& _quat)
 	{
-		const __m128 mask0001 = BUILD_MASKF(0, 0, 0, 1);
-		const __m128 mask1110 = BUILD_MASKF(1, 1, 1, 0);
+		const __m128i mask0001 = BUILD_MASKF(0, 0, 0, 1);
+		const __m128i mask1110 = BUILD_MASKF(1, 1, 1, 0);
 
 		const core::vectorSIMDf& quat = reinterpret_cast<const core::vectorSIMDf&>(_quat);
-		rows[0] = ((quat.yyyy() * ((quat.yxwx() & mask1110) * vectorSIMDf(2.f))) + (quat.zzzz() * (quat.zwxx() & mask1110) * vectorSIMDf(2.f, -2.f, 2.f, 0.f))) | (rows[0] & mask0001);
+		rows[0] = ((quat.yyyy() * ((quat.yxwx() & mask1110) * vectorSIMDf(2.f))) + (quat.zzzz() * (quat.zwxx() & mask1110) * vectorSIMDf(2.f, -2.f, 2.f, 0.f))) | (reinterpret_cast<const vectorSIMDu32&>(rows[0]) & mask0001);
 		rows[0].x = 1.f - rows[0].x;
 
-		rows[1] = ((quat.zzzz() * ((quat.wzyx() & mask1110) * vectorSIMDf(2.f))) + (quat.xxxx() * (quat.yxwx() & mask1110) * vectorSIMDf(2.f, 2.f, -2.f, 0.f))) | (rows[1] & mask0001);
+		rows[1] = ((quat.zzzz() * ((quat.wzyx() & mask1110) * vectorSIMDf(2.f))) + (quat.xxxx() * (quat.yxwx() & mask1110) * vectorSIMDf(2.f, 2.f, -2.f, 0.f))) | (reinterpret_cast<const vectorSIMDu32&>(rows[1]) & mask0001);
 		rows[1].y = 1.f - rows[1].y;
 
-		rows[2] = ((quat.xxxx() * ((quat.zwxx() & mask1110) * vectorSIMDf(2.f))) + (quat.yyyy() * (quat.wzyx() & mask1110) * vectorSIMDf(-2.f, 2.f, 2.f, 0.f))) | (rows[2] & mask0001);
+		rows[2] = ((quat.xxxx() * ((quat.zwxx() & mask1110) * vectorSIMDf(2.f))) + (quat.yyyy() * (quat.wzyx() & mask1110) * vectorSIMDf(-2.f, 2.f, 2.f, 0.f))) | (reinterpret_cast<const vectorSIMDu32&>(rows[2]) & mask0001);
 		rows[2].z = 1.f - rows[2].z;
 
 		return *this;
 	}
 
-#define BUILD_XORMASKF(_x_, _y_, _z_, _w_) _mm_castsi128_ps(_mm_setr_epi32(_x_*0x80000000, _y_*0x80000000, _z_*0x80000000, _w_*0x80000000))
+#define BUILD_XORMASKF(_x_, _y_, _z_, _w_) _mm_setr_epi32(_x_ ? 0x80000000u:0x0u, _y_ ? 0x80000000u:0x0u, _z_ ? 0x80000000u:0x0u, _w_ ? 0x80000000u:0x0u)
     inline matrix3x4SIMD& setScaleRotationAndTranslation(const vectorSIMDf& _scale, const core::quaternion& _quat, const vectorSIMDf& _translation)
     {
-        const __m128 mask1110 = BUILD_MASKF(1, 1, 1, 0);
+        const __m128i mask1110 = BUILD_MASKF(1, 1, 1, 0);
 
         const vectorSIMDf& quat = reinterpret_cast<const vectorSIMDf&>(_quat);
         const vectorSIMDf dblScale = (_scale*2.f) & mask1110;
 
-        vectorSIMDf mlt = dblScale ^ BUILD_XORMASKF(0, 1, 0, 0);
+        vectorSIMDf mlt =  dblScale^BUILD_XORMASKF(0, 1, 0, 0);
         rows[0] = ((quat.yyyy() * ((quat.yxwx() & mask1110) * dblScale)) + (quat.zzzz() * (quat.zwxx() & mask1110) * mlt));
         rows[0].x = _scale.x - rows[0].x;
 
-        mlt = dblScale ^ BUILD_XORMASKF(0, 0, 1, 0);
+        mlt = dblScale^BUILD_XORMASKF(0, 0, 1, 0);
         rows[1] = ((quat.zzzz() * ((quat.wzyx() & mask1110) * dblScale)) + (quat.xxxx() * (quat.yxwx() & mask1110) * mlt));
         rows[1].y = _scale.y - rows[1].y;
 
-        mlt = dblScale ^ BUILD_XORMASKF(1, 0, 0, 0);
+        mlt = dblScale^BUILD_XORMASKF(1, 0, 0, 0);
         rows[2] = ((quat.xxxx() * ((quat.zwxx() & mask1110) * dblScale)) + (quat.yyyy() * (quat.wzyx() & mask1110) * mlt));
         rows[2].z = _scale.z - rows[2].z;
 
@@ -526,7 +535,7 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 		core::vectorSIMDf& row1 = rows[1];
 		core::vectorSIMDf& row2 = rows[2];
 
-		const core::vectorSIMDf mask0001 = BUILD_MASKF(0, 0, 0, 1);
+		const __m128i mask0001 = BUILD_MASKF(0, 0, 0, 1);
 		row0 = (row0 & mask0001) + (vtuppca & BUILD_MASKF(1, 0, 0, 0));
 		row1 = (row1 & mask0001) + (vtuppca & BUILD_MASKF(0, 1, 0, 0));
 		row2 = (row2 & mask0001) + (vtuppca & BUILD_MASKF(0, 0, 1, 0));
@@ -546,19 +555,19 @@ struct matrix3x4SIMD : private AlignedBase<_IRR_MATRIX_ALIGNMENT>
 
 private:
 #define BROADCAST32(fpx) _MM_SHUFFLE(fpx, fpx, fpx, fpx)
-	static inline __m128 doJob(const __m128& a, const matrix3x4SIMD& _mtx)
+	static inline vectorSIMDf doJob(const __m128& a, const matrix3x4SIMD& _mtx)
 	{
 		__m128 r0 = _mtx.rows[0].getAsRegister();
 		__m128 r1 = _mtx.rows[1].getAsRegister();
 		__m128 r2 = _mtx.rows[2].getAsRegister();
 
-		const __m128 mask = _mm_castsi128_ps(_mm_setr_epi32(0, 0, 0, 0xffffffff));
+		const __m128i mask = _mm_setr_epi32(0, 0, 0, 0xffffffff);
 
-		__m128 res;
+		vectorSIMDf res;
 		res = _mm_mul_ps(_mm_shuffle_ps(a, a, BROADCAST32(0)), r0);
-		res = _mm_add_ps(res, _mm_mul_ps(_mm_shuffle_ps(a, a, BROADCAST32(1)), r1));
-		res = _mm_add_ps(res, _mm_mul_ps(_mm_shuffle_ps(a, a, BROADCAST32(2)), r2));
-		res = _mm_add_ps(res, _mm_and_ps(a, mask)); // always 0 0 0 a3 -- no shuffle needed
+		res+= _mm_mul_ps(_mm_shuffle_ps(a, a, BROADCAST32(1)), r1);
+		res+= _mm_mul_ps(_mm_shuffle_ps(a, a, BROADCAST32(2)), r2);
+		res+= vectorSIMDf(a) & mask; // always 0 0 0 a3 -- no shuffle needed
 		return res;
 	}
 
