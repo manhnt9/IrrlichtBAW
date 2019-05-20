@@ -519,8 +519,10 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/AOWindow/Editbox"));
-
-    if (ext::cegui::Exists(box->getText().c_str())) {
+    
+    auto fs = device->getFileSystem();
+    
+    if (fs->existFile(box->getText().c_str())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_AO, image.buffer, image.w, image.h);
 
@@ -560,8 +562,10 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/BumpWindow/Editbox"));
+    
+    auto fs = device->getFileSystem();
 
-    if (ext::cegui::Exists(box->getText().c_str())) {
+    if (fs->existFile(box->getText().c_str())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_BUMP, image.buffer, image.w, image.h);
 

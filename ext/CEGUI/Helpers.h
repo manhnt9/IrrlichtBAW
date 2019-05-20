@@ -59,9 +59,6 @@ public:
 void Replace(std::string& str, const std::string& from, const std::string& to);
 std::vector<std::string> Split(const std::string& s, const char delimiter = ' ');
 
-// Checks if a given file exists. Like mentioned Helpers.cpp, this might be replaced with IrrlichtBAW's file system API.
-int Exists(const char* file);
-
 std::pair<bool, std::string> openFileDialog(const char* title, const std::vector<std::string>& filters);
 
 // Loads an image file to a wrapped buffer. Replace your own IrrlichtBAW loader here
