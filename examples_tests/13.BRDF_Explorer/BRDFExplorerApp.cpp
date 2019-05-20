@@ -506,12 +506,14 @@ void BRDFExplorerApp::eventAOTextureBrowse(const ::CEGUI::EventArgs&)
         const auto image = ext::cegui::loadImage(p.second.c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_AO, image.buffer, image.w, image.h);
 
+        char buffer[1024];
+        sprintf(buffer, "%s (%ix%i)\nLeft-click to select a new texture.",
+            p.second.c_str(), image.w, image.h);
+
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
-                .c_str());
+            buffer);
     }
 }
 
@@ -526,11 +528,13 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_AO, image.buffer, image.w, image.h);
 
+        char buffer[1024];
+        sprintf(buffer, "%s (%ix%i)\nLeft-click to select a new texture.",
+            box->getText().c_str(), image.w, image.h);
+
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            irr::ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                box->getText().c_str(), image.w, image.h)
-                .c_str());
+            buffer);
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -549,12 +553,14 @@ void BRDFExplorerApp::eventBumpTextureBrowse(const ::CEGUI::EventArgs&)
         const auto image = irr::ext::cegui::loadImage(p.second.c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_BUMP, image.buffer, image.w, image.h);
 
+        char buffer[1024];
+        sprintf(buffer, "%s (%ix%i)\nLeft-click to select a new texture.",
+            p.second.c_str(), image.w, image.h);
+
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
-                .c_str());
+            buffer);
     }
 }
 
@@ -569,11 +575,13 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_BUMP, image.buffer, image.w, image.h);
 
+        char buffer[1024];
+        sprintf(buffer, "%s (%ix%i)\nLeft-click to select a new texture.",
+            box->getText().c_str(), image.w, image.h);
+
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                box->getText().c_str(), image.w, image.h)
-                .c_str());
+            buffer);
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -588,9 +596,9 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
     const auto parent = static_cast<CEGUI::PushButton*>(we.window)->getParent()->getName();
     const auto p = ext::cegui::openFileDialog(FileDialogTitle, FileDialogFilters);
 
-
-    const auto path_label = ext::cegui::ssprintf("TextureViewWindow/%s/LabelWindow/Label", parent.c_str());
-    const auto path_texture = ext::cegui::ssprintf("TextureViewWindow/%s/Texture", parent.c_str());
+    char path_label[128], path_texture[128];
+    sprintf(path_label, "TextureViewWindow/%s/LabelWindow/Label", parent.c_str());
+    sprintf(path_texture, "TextureViewWindow/%s/Texture", parent.c_str());
 
     if (p.first) {
         auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label));
@@ -609,12 +617,14 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
         const auto image = ext::cegui::loadImage(p.second.c_str());
         loadTextureSlot(type, image.buffer, image.w, image.h);
 
+        char tooltip[1024];
+        sprintf(tooltip, "%s (%ix%i)\nLeft-click to select a new texture.",
+            p.second.c_str(), image.w, image.h);
+
         box->setText(v[v.size() - 1]);
         updateTooltip(
-            path_texture.c_str(),
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
-                .c_str());
+            path_texture,
+            tooltip);
     }
 }
 
