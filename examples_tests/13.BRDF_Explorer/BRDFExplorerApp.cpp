@@ -617,7 +617,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
     path_texture << "TextureViewWindow/" << parent.c_str() << "/Texture";
 
     if (p.first) {
-        auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label));
+        auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label.str()));
         const auto v = ext::cegui::Split(p.second, '\\');
 
         ETEXTURE_SLOT type;
