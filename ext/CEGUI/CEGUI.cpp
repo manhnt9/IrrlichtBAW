@@ -216,8 +216,7 @@ void GUIManager::createRootWindowFromLayout(const std::string& layout)
     const char* title,
     const char* name)
 {
-    assert(parent);
-    assert(name);
+    assert(parent && name);
     static const auto defaultColor = ::CEGUI::Colour(1.0f, 1.0f, 1.0f, 1.0f);
 
     Window* layout = WindowManager::getSingleton().loadLayoutFromFile(
