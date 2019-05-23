@@ -509,8 +509,7 @@ void BRDFExplorerApp::eventAOTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
+            setTextureTooltip(p.second.c_str(), image.w, image.h)
                 .c_str());
     }
 }
@@ -526,8 +525,7 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            irr::ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                box->getText().c_str(), image.w, image.h)
+            setTextureTooltip(box->getText().c_str(), image.w, image.h)
                 .c_str());
     } else {
         std::string s;
@@ -550,8 +548,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
+            setTextureTooltip(p.second.c_str(), image.w, image.h)
                 .c_str());
     }
 }
@@ -567,8 +564,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                box->getText().c_str(), image.w, image.h)
+            setTextureTooltip(box->getText().c_str(), image.w, image.h)
                 .c_str());
     } else {
         std::string s;
@@ -584,12 +580,12 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
     const auto parent = static_cast<CEGUI::PushButton*>(we.window)->getParent()->getName();
     const auto p = GUI->openFileDialog(FileDialogTitle, FileDialogFilters);
 
-
-    const auto path_label = ext::cegui::ssprintf("TextureViewWindow/%s/LabelWindow/Label", parent.c_str());
-    const auto path_texture = ext::cegui::ssprintf("TextureViewWindow/%s/Texture", parent.c_str());
+    std::ostringstream path_label, path_texture;
+    path_label << "TextureViewWindow/" << parent.c_str() << "/LabelWindow/Label";
+    path_texture << "TextureViewWindow/" << parent.c_str() << "/Texture";
 
     if (p.first) {
-        auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label));
+        auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label.str()));
         const auto v = ext::cegui::Split(p.second, '\\');
 
         ETEXTURE_SLOT type;
@@ -608,8 +604,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
         box->setText(v[v.size() - 1]);
         updateTooltip(
             path_texture.c_str(),
-            ext::cegui::ssprintf("%s (%ix%i)\nLeft-click to select a new texture.",
-                p.second.c_str(), image.w, image.h)
+            setTextureTooltip(p.second.c_str(), image.w, image.h)
                 .c_str());
     }
 }

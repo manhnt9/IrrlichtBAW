@@ -67,6 +67,14 @@ std::pair<bool, std::string> openFileDialog(const char* title, const std::vector
 // Loads an image file to a wrapped buffer. Replace your own IrrlichtBAW loader here
 ImageBuffer loadImage(const char* file);
 
+std::string setTextureTooltip(const char* file, int w, int h)
+{
+    std::ostringstream ss;
+    ss << file << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
+    
+    return ss.str();
+}
+
 // Basically std::to_string(float), but with customizable floating point precision
 template <typename T>
 ::CEGUI::String toStringFloat(const T rvalue, const int n = 6)
@@ -75,16 +83,6 @@ template <typename T>
     out.precision(n);
     out << std::fixed << rvalue;
     return ::CEGUI::String(out.str());
-}
-
-// sprintf() for std::string
-template <typename... Args>
-::CEGUI::String ssprintf(const std::string& format, Args... args)
-{
-    size_t size = snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf(new char[size]);
-    snprintf(buf.get(), size, format.c_str(), args...);
-    return ::CEGUI::String(std::string(buf.get(), buf.get() + size - 1)); // We don't want the '\0' inside
 }
 
 std::string readWindowLayout(const std::string& layoutName);
