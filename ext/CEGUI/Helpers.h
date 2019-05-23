@@ -59,9 +59,6 @@ public:
 void replace(std::string& str, const std::string& from, const std::string& to);
 std::vector<std::string> Split(const std::string& s, const char delimiter = ' ');
 
-// Checks if a given file exists. Like mentioned Helpers.cpp, this might be replaced with IrrlichtBAW's file system API.
-int Exists(const char* file);
-
 std::pair<bool, std::string> openFileDialog(const char* title, const std::vector<std::string>& filters);
 
 // Loads an image file to a wrapped buffer. Replace your own IrrlichtBAW loader here
@@ -77,12 +74,12 @@ std::string setTextureTooltip(const char* file, int w, int h)
 
 // Basically std::to_string(float), but with customizable floating point precision
 template <typename T>
-::CEGUI::String toStringFloat(const T rvalue, const int n = 6)
+std::string toStringFloat(const T rvalue, const int n = 6)
 {
     std::ostringstream out;
     out.precision(n);
     out << std::fixed << rvalue;
-    return ::CEGUI::String(out.str());
+    return out.str();
 }
 
 std::string readWindowLayout(const std::string& layoutName);

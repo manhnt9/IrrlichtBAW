@@ -84,18 +84,6 @@ ImageBuffer::~ImageBuffer()
         stbi_image_free(buffer);
 }
 
-// Might be replaced with IrrlichtBAW's file system API.
-int Exists(const char* file)
-{
-#if defined(_WIN32)
-    DWORD attribute = GetFileAttributes(file);
-    return (attribute != INVALID_FILE_ATTRIBUTES && !(attribute & FILE_ATTRIBUTE_DIRECTORY));
-#elif defined(__linux__)
-    struct stat s;
-    return stat(file, &s) == 0;
-#endif
-}
-
 void replace(std::string& str, const std::string& from, const std::string& to)
 {
     size_t start = 0;
