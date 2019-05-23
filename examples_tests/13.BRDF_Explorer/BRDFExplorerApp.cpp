@@ -26,7 +26,7 @@ SOFTWARE.
 */
 
 #include "BRDFExplorerApp.h"
-#include "../../ext/CEGUI/CEGUI.h"
+#include "../../ext/CEGUI/ExtCEGUI.h"
 
 namespace irr
 {
@@ -497,7 +497,7 @@ void BRDFExplorerApp::showErrorMessage(const char* title, const char* message)
 
 void BRDFExplorerApp::eventAOTextureBrowse(const ::CEGUI::EventArgs&)
 {
-    const auto p = ext::cegui::openFileDialog(FileDialogTitle, FileDialogFilters);
+    const auto p = GUI->openFileDialog(FileDialogTitle, FileDialogFilters);
 
     if (p.first) {
         auto box = static_cast<CEGUI::Editbox*>(
@@ -553,7 +553,7 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
 void BRDFExplorerApp::eventBumpTextureBrowse(const ::CEGUI::EventArgs&)
 {
-    const auto p = ext::cegui::openFileDialog(FileDialogTitle, FileDialogFilters);
+    const auto p = GUI->openFileDialog(FileDialogTitle, FileDialogFilters);
 
     if (p.first) {
         auto box = static_cast<CEGUI::Editbox*>(
@@ -610,7 +610,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
 {
     const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
     const auto parent = static_cast<CEGUI::PushButton*>(we.window)->getParent()->getName();
-    const auto p = ext::cegui::openFileDialog(FileDialogTitle, FileDialogFilters);
+    const auto p = GUI->openFileDialog(FileDialogTitle, FileDialogFilters);
 
     std::ostringstream path_label, path_texture;
     path_label << "TextureViewWindow/" << parent.c_str() << "/LabelWindow/Label";

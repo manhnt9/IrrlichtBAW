@@ -162,11 +162,7 @@ if(IRR_BUILD_TOOLS)
 	add_subdirectory(tools) # convert2BAW
 endif()
 
-if(IRR_BUILD_CEGUI)
-	add_definitions(-DIRR_BUILD_CEGUI)
-	set(IRR_CEGUI_EXT_INCLUDE_DIRS "")
-	add_subdirectory(./ext/CEGUI)
-endif()
+add_subdirectory(ext)
 
 if(IRR_BUILD_EXAMPLES)
 	add_subdirectory(examples_tests)
