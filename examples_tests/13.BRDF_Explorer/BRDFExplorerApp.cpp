@@ -454,8 +454,11 @@ void BRDFExplorerApp::loadTextureSlot(ETEXTURE_SLOT slot,
 
 void BRDFExplorerApp::updateTooltip(const std::string& name, const std::string& text)
 {
+    std::string s(text);
+    ext::cegui::replace(s, "\\", "\\\\");
+
     static_cast<CEGUI::DefaultWindow*>(GUI->getRootWindow()->getChild(name))
-        ->setTooltipText(ext::cegui::replace(text, "\\", "\\\\"));
+        ->setTooltipText(s.c_str());
 }
 
 void BRDFExplorerApp::showErrorMessage(const char* title, const char* message)
@@ -525,7 +528,8 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
-        showErrorMessage("Error", ext::cegui::replace(s, "\\", "\\\\").c_str());
+        ext::cegui::replace(s, "\\", "\\\\");
+        showErrorMessage("Error", s.c_str());
     }
 }
 
@@ -561,7 +565,8 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
-        showErrorMessage("Error", ext::cegui::replace(s, "\\", "\\\\").c_str());
+        ext::cegui::replace(s, "\\", "\\\\");
+        showErrorMessage("Error", s.c_str());
     }
 }
 
