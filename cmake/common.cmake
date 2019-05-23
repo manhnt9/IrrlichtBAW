@@ -48,19 +48,24 @@ macro(irr_create_executable_project _EXTRA_SOURCES _EXTRA_OPTIONS _EXTRA_INCLUDE
 	endif()
 endmacro()
 
-macro(irr_create_library_project EXECUTABLE_NAME _EXTRA_SOURCES _EXTRA_OPTIONS _EXTRA_INCLUDES _EXTRA_LIBS)
-	project(${EXECUTABLE_NAME})
+macro(irr_create_ext_library_project EXT_NAME LIB_HEADERS LIB_SOURCES LIB_INCLUDES LIB_OPTIONS)
+	set(LIB_NAME "IrrExt${EXT_NAME}")
+	project(${LIB_NAME})
 
-	add_library(${EXECUTABLE_NAME} ${_EXTRA_SOURCES})
+	add_library(${LIB_NAME} ${LIB_SOURCES})
 	# EXTRA_SOURCES is var containing non-common names of sources (if any such sources, then EXTRA_SOURCES must be set before including this cmake code)
-	add_dependencies(${EXECUTABLE_NAME} Irrlicht)
+	add_dependencies(${LIB_NAME} Irrlicht)
 
-	target_include_directories(${EXECUTABLE_NAME}
-		PUBLIC ../../include
-		PRIVATE ${_EXTRA_INCLUDES}
+	target_include_directories(${LIB_NAME}
+		PUBLIC ${CMAKE_BINARY_DIR}/include/irr/config/debug
+		PUBLIC ${CMAKE_BINARY_DIR}/include/irr/config/release
+		PUBLIC ${CMAKE_SOURCE_DIR}/include
+		PUBLIC ${CMAKE_SOURCE_DIR}/src
+		PUBLIC ${CMAKE_SOURCE_DIR}/source/Irrlicht
+		PRIVATE ${LIB_INCLUDES}
 	)
-	target_link_libraries(${EXECUTABLE_NAME} PUBLIC Irrlicht ${_EXTRA_LIBS})
-	target_compile_options(${EXECUTABLE_NAME} PUBLIC ${_EXTRA_OPTIONS})
+	add_dependencies(${LIB_NAME} Irrlicht)
+	target_compile_options(${LIB_NAME} PUBLIC ${LIB_OPTIONS})
 
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		add_compile_options(
@@ -75,13 +80,13 @@ macro(irr_create_library_project EXECUTABLE_NAME _EXTRA_SOURCES _EXTRA_OPTIONS _
 	irr_adjust_flags() # macro defined in root CMakeLists
 	irr_adjust_definitions() # macro defined in root CMakeLists
 
-	set_target_properties(${EXECUTABLE_NAME} PROPERTIES DEBUG_POSTFIX _d)
-	set_target_properties(${EXECUTABLE_NAME}
+	set_target_properties(${LIB_NAME} PROPERTIES DEBUG_POSTFIX _d)
+	set_target_properties(${LIB_NAME}
 		PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
 	if(MSVC)
-		set_target_properties(${EXECUTABLE_NAME}
+		set_target_properties(${LIB_NAME}
 			PROPERTIES
 			RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/bin"
 			RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin"
@@ -90,14 +95,37 @@ macro(irr_create_library_project EXECUTABLE_NAME _EXTRA_SOURCES _EXTRA_OPTIONS _
 	endif()
 
 	install(
-		TARGETS ${EXECUTABLE_NAME}
-		DESTINATION ./lib
+		FILES ${LIB_HEADERS}
+		DESTINATION ./include/irr/ext/${EXT_NAME}
 		CONFIGURATIONS Release
 	)
 	install(
-		TARGETS ${EXECUTABLE_NAME}
-		DESTINATION ./debug/lib
+		FILES ${LIB_HEADERS}
+		DESTINATION ./debug/include/irr/ext/${EXT_NAME}
 		CONFIGURATIONS Debug
+	)
+	install(
+		TARGETS ${LIB_NAME}
+		DESTINATION ./lib/irr/ext/${EXT_NAME}
+		CONFIGURATIONS Release
+	)
+	install(
+		TARGETS ${LIB_NAME}
+		DESTINATION ./debug/lib/irr/ext/${EXT_NAME}
+		CONFIGURATIONS Debug
+	)
+
+	set("IRR_EXT_${EXT_NAME}_INCLUDE_DIRS"
+		"${CMAKE_SOURCE_DIR}/include/"
+		"${CMAKE_SOURCE_DIR}/src"
+		"${CMAKE_SOURCE_DIR}/source/Irrlicht"
+		"${CMAKE_SOURCE_DIR}/ext/${EXT_NAME}"
+		"${LIB_INCLUDES}"
+		PARENT_SCOPE
+	)
+	set("IRR_EXT_${EXT_NAME}_LIB"
+		"${LIB_NAME}"
+		PARENT_SCOPE
 	)
 endmacro()
 
