@@ -96,7 +96,7 @@ int Exists(const char* file)
 #endif
 }
 
-void Replace(std::string& str, const std::string& from, const std::string& to)
+void replace(std::string& str, const std::string& from, const std::string& to)
 {
     size_t start = 0;
     while ((start = str.find(from, start)) != std::string::npos) {

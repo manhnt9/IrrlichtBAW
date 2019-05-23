@@ -56,7 +56,7 @@ public:
 };
 
 // Needs replacement if there are better alternative(s).
-void Replace(std::string& str, const std::string& from, const std::string& to);
+void replace(std::string& str, const std::string& from, const std::string& to);
 std::vector<std::string> Split(const std::string& s, const char delimiter = ' ');
 
 // Checks if a given file exists. Like mentioned Helpers.cpp, this might be replaced with IrrlichtBAW's file system API.

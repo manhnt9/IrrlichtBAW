@@ -88,7 +88,7 @@ class BRDFExplorerApp {
         void initDropdown();
         void initTooltip();
 
-        void updateTooltip(const char* name, const char* text);
+        void updateTooltip(const std::string& name, const std::string& text);
         void eventAOTextureBrowse(const ::CEGUI::EventArgs&);
         void eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&);
         void eventBumpTextureBrowse(const ::CEGUI::EventArgs&);
