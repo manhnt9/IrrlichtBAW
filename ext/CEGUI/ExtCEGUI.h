@@ -72,8 +72,6 @@ class GUIManager: public core::IReferenceCounted, public IEventReceiver
         auto getRootWindow() const { return RootWindow; }
         auto& getRenderer() const { return Renderer; }
 
-        bool isExists(const char* file);
-
         std::pair<bool, std::string>  openFileDialog(
             const char* title,
             const std::vector<std::string>& filters

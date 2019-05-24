@@ -32,7 +32,8 @@ namespace irr
 {
 
 BRDFExplorerApp::BRDFExplorerApp(IrrlichtDevice* device)
-    :   Driver(device->getVideoDriver()),
+    :   Device(device),
+        Driver(device->getVideoDriver()),
         GUI(ext::cegui::createGUIManager(device))
 {
     TextureSlotMap = {
@@ -517,8 +518,8 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/AOWindow/Editbox"));
-
-    if (ext::cegui::Exists(box->getText().c_str())) {
+	
+    if (Device->getFileSystem()->existFile(box->getText())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_AO, image.buffer, image.w, image.h);
 
@@ -554,8 +555,8 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/BumpWindow/Editbox"));
-
-    if (ext::cegui::Exists(box->getText().c_str())) {
+	
+    if (Device->getFileSystem()->existFile(box->getText())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_BUMP, image.buffer, image.w, image.h);
 

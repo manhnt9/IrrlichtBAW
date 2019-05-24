@@ -107,6 +107,7 @@ class BRDFExplorerApp {
         void showErrorMessage(const char* title, const char* message);
 
     private:
+        IrrlichtDevice* Device = nullptr;
         video::IVideoDriver* Driver = nullptr;
         ext::cegui::GUIManager* GUI = nullptr;
         TTextureSlotMap TextureSlotMap;

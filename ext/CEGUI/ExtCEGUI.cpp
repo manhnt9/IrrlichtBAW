@@ -56,11 +56,6 @@ GUIManager::GUIManager(IrrlichtDevice* device)
 
 }
 
-bool GUIManager::isExists(const char* file)
-{
-    return Device->getFileSystem()->existFile(file);
-}
-
 std::pair<bool, std::string> GUIManager::openFileDialog(
     const char* title,
     const std::vector<std::string>& filters)
