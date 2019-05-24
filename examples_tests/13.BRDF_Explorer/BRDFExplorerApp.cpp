@@ -510,7 +510,7 @@ void BRDFExplorerApp::eventAOTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            setTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 
@@ -525,7 +525,7 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            setTextureTooltip(box->getText().c_str(), image.w, image.h));
+            getTextureTooltip(box->getText().c_str(), image.w, image.h));
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -547,7 +547,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            setTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 
@@ -562,7 +562,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            setTextureTooltip(box->getText().c_str(), image.w, image.h));
+            getTextureTooltip(box->getText().c_str(), image.w, image.h));
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -583,7 +583,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
 
     if (p.first) {
         auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label.str()));
-        const auto v = ext::cegui::Split(p.second, '\\');
+        const auto v = ext::cegui::split(p.second, '\\');
 
         ETEXTURE_SLOT type;
         if (parent == "Texture0Window")
@@ -601,7 +601,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
         box->setText(v[v.size() - 1]);
         updateTooltip(
             path_texture.c_str(),
-            setTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 

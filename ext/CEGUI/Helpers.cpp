@@ -73,6 +73,14 @@ std::vector<std::string> Split(const std::string& s, const char delimiter)
     return v;
 }
 
+std::string getTextureTooltip(const char* file, int w, int h)
+{
+    std::ostringstream ss(file, std::ios::ate);
+    ss << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
+    
+    return ss.str();
+}
+
 ImageBuffer::ImageBuffer(const char* file)
 {
     buffer = stbi_load(file, &w, &h, &c, STBI_rgb_alpha);

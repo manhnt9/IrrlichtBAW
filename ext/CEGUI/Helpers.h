@@ -57,20 +57,15 @@ public:
 
 // Needs replacement if there are better alternative(s).
 void replace(std::string& str, const std::string& from, const std::string& to);
-std::vector<std::string> Split(const std::string& s, const char delimiter = ' ');
+std::vector<std::string> split(const std::string& s, const char delimiter = ' ');
 
 std::pair<bool, std::string> openFileDialog(const char* title, const std::vector<std::string>& filters);
 
 // Loads an image file to a wrapped buffer. Replace your own IrrlichtBAW loader here
 ImageBuffer loadImage(const char* file);
 
-std::string setTextureTooltip(const char* file, int w, int h)
-{
-    std::ostringstream ss;
-    ss << file << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
-    
-    return ss.str();
-}
+// Formatting helper for the texture buttons' tooltip objects.
+std::string getTextureTooltip(const char* file, int w, int h);
 
 // Basically std::to_string(float), but with customizable floating point precision
 template <typename T>
