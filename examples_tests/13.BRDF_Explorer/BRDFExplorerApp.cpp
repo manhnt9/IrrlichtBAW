@@ -462,6 +462,14 @@ void BRDFExplorerApp::updateTooltip(const std::string& name, const std::string& 
         ->setTooltipText(s);
 }
 
+std::string BRDFExplorerApp::getTextureTooltip(const char* file, int w, int h)
+{
+    std::ostringstream ss(file, std::ios::ate);
+    ss << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
+    
+    return ss.str();
+}
+
 void BRDFExplorerApp::showErrorMessage(const char* title, const char* message)
 {
     auto root = GUI->getRootWindow();
@@ -510,7 +518,7 @@ void BRDFExplorerApp::eventAOTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            ext::cegui::getTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 
@@ -525,7 +533,7 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/AOWindow/ImageButton",
-            ext::cegui::getTextureTooltip(box->getText().c_str(), image.w, image.h));
+            getTextureTooltip(box->getText().c_str(), image.w, image.h));
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -547,7 +555,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse(const ::CEGUI::EventArgs&)
         box->setText(p.second);
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::getTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 
@@ -562,7 +570,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 
         updateTooltip(
             "MaterialParamsWindow/BumpWindow/ImageButton",
-            ext::cegui::getTextureTooltip(box->getText().c_str(), image.w, image.h));
+            getTextureTooltip(box->getText().c_str(), image.w, image.h));
     } else {
         std::string s;
         s += std::string(box->getText().c_str()) + ": The file couldn't be opened.";
@@ -602,7 +610,7 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
         box->setText(v[v.size() - 1]);
         updateTooltip(
             path_texture.str(),
-            ext::cegui::getTextureTooltip(p.second.c_str(), image.w, image.h));
+            getTextureTooltip(p.second.c_str(), image.w, image.h));
     }
 }
 

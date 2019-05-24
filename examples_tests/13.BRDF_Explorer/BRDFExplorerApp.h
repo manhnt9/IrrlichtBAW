@@ -103,6 +103,9 @@ class BRDFExplorerApp {
             "Image (*.jpg, *.jpeg, *.png, *.bmp, *.tga, *.dds, *.gif)",
             "*.jpg *.jpeg *.png *.bmp *.tga *.dds *.gif"
         };
+		
+        // Formatting helper for the texture buttons' tooltip objects.
+        std::string getTextureTooltip(const char* file, int w, int h);
 
         void showErrorMessage(const char* title, const char* message);
 

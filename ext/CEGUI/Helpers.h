@@ -64,9 +64,6 @@ std::pair<bool, std::string> openFileDialog(const char* title, const std::vector
 // Loads an image file to a wrapped buffer. Replace your own IrrlichtBAW loader here
 ImageBuffer loadImage(const char* file);
 
-// Formatting helper for the texture buttons' tooltip objects.
-std::string getTextureTooltip(const char* file, int w, int h);
-
 // Basically std::to_string(float), but with customizable floating point precision
 template <typename T>
 std::string toStringFloat(const T rvalue, const int n = 6)

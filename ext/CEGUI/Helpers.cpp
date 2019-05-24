@@ -98,14 +98,6 @@ ImageBuffer loadImage(const char* file)
     return ImageBuffer(file);
 }
 
-std::string getTextureTooltip(const char* file, int w, int h)
-{
-    std::ostringstream ss(file, std::ios::ate);
-    ss << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
-    
-    return ss.str();
-}
-
 std::string readWindowLayout(const std::string& layoutPath)
 {
     std::ifstream file(layoutPath);
