@@ -459,7 +459,7 @@ void BRDFExplorerApp::updateTooltip(const std::string& name, const std::string& 
     ext::cegui::replace(s, "\\", "\\\\");
 
     static_cast<CEGUI::DefaultWindow*>(GUI->getRootWindow()->getChild(name))
-        ->setTooltipText(s.c_str());
+        ->setTooltipText(s);
 }
 
 void BRDFExplorerApp::showErrorMessage(const char* title, const char* message)
@@ -518,7 +518,7 @@ void BRDFExplorerApp::eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/AOWindow/Editbox"));
-	
+  
     if (Device->getFileSystem()->existFile(box->getText())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_AO, image.buffer, image.w, image.h);
@@ -555,7 +555,7 @@ void BRDFExplorerApp::eventBumpTextureBrowse_EditBox(const ::CEGUI::EventArgs&)
 {
     auto box = static_cast<CEGUI::Editbox*>(
         GUI->getRootWindow()->getChild("MaterialParamsWindow/BumpWindow/Editbox"));
-	
+  
     if (Device->getFileSystem()->existFile(box->getText())) {
         const auto image = ext::cegui::loadImage(box->getText().c_str());
         loadTextureSlot(ETEXTURE_SLOT::TEXTURE_BUMP, image.buffer, image.w, image.h);
@@ -576,10 +576,11 @@ void BRDFExplorerApp::eventTextureBrowse(const CEGUI::EventArgs& e)
     const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
     const auto parent = static_cast<CEGUI::PushButton*>(we.window)->getParent()->getName();
     const auto p = GUI->openFileDialog(FileDialogTitle, FileDialogFilters);
+    std::ostringstream path_label("TextureViewWindow/", std::ios::ate),
+                       path_texture("TextureViewWindow/", std::ios::ate);
 
-    std::ostringstream path_label, path_texture;
-    path_label << "TextureViewWindow/" << parent.c_str() << "/LabelWindow/Label";
-    path_texture << "TextureViewWindow/" << parent.c_str() << "/Texture";
+    path_label << parent.c_str() << "/LabelWindow/Label";
+    path_texture << parent.c_str() << "/Texture";
 
     if (p.first) {
         auto box = static_cast<CEGUI::Editbox*>(GUI->getRootWindow()->getChild(path_label.str()));

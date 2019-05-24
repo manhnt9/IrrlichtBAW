@@ -62,7 +62,7 @@ std::pair<bool, std::string> openFileDialog(
     return std::make_pair(false, std::string());
 }
 
-std::vector<std::string> Split(const std::string& s, const char delimiter)
+std::vector<std::string> split(const std::string& s, const char delimiter)
 {
     std::vector<std::string> v;
     std::istringstream f(s);
@@ -71,14 +71,6 @@ std::vector<std::string> Split(const std::string& s, const char delimiter)
         v.push_back(r);
 
     return v;
-}
-
-std::string getTextureTooltip(const char* file, int w, int h)
-{
-    std::ostringstream ss(file, std::ios::ate);
-    ss << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
-    
-    return ss.str();
 }
 
 ImageBuffer::ImageBuffer(const char* file)
@@ -104,6 +96,14 @@ void replace(std::string& str, const std::string& from, const std::string& to)
 ImageBuffer loadImage(const char* file)
 {
     return ImageBuffer(file);
+}
+
+std::string getTextureTooltip(const char* file, int w, int h)
+{
+    std::ostringstream ss(file, std::ios::ate);
+    ss << " (" << w << 'x' << h << ")\nLeft-click to select a new texture.";
+    
+    return ss.str();
 }
 
 std::string readWindowLayout(const std::string& layoutPath)
