@@ -56,11 +56,8 @@ public:
 };
 
 // Needs replacement if there are better alternative(s).
-void Replace(std::string& str, const std::string& from, const std::string& to);
-std::vector<std::string> Split(const std::string& s, const char delimiter = ' ');
-
-// Checks if a given file exists. Like mentioned Helpers.cpp, this might be replaced with IrrlichtBAW's file system API.
-int Exists(const char* file);
+void replace(std::string& str, const std::string& from, const std::string& to);
+std::vector<std::string> split(const std::string& s, const char delimiter = ' ');
 
 std::pair<bool, std::string> openFileDialog(const char* title, const std::vector<std::string>& filters);
 
@@ -69,22 +66,12 @@ ImageBuffer loadImage(const char* file);
 
 // Basically std::to_string(float), but with customizable floating point precision
 template <typename T>
-::CEGUI::String toStringFloat(const T rvalue, const int n = 6)
+std::string toStringFloat(const T rvalue, const int n = 6)
 {
     std::ostringstream out;
     out.precision(n);
     out << std::fixed << rvalue;
-    return ::CEGUI::String(out.str());
-}
-
-// sprintf() for std::string
-template <typename... Args>
-::CEGUI::String ssprintf(const std::string& format, Args... args)
-{
-    size_t size = snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf(new char[size]);
-    snprintf(buf.get(), size, format.c_str(), args...);
-    return ::CEGUI::String(std::string(buf.get(), buf.get() + size - 1)); // We don't want the '\0' inside
+    return out.str();
 }
 
 std::string readWindowLayout(const std::string& layoutName);

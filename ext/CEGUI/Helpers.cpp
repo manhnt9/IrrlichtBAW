@@ -62,7 +62,7 @@ std::pair<bool, std::string> openFileDialog(
     return std::make_pair(false, std::string());
 }
 
-std::vector<std::string> Split(const std::string& s, const char delimiter)
+std::vector<std::string> split(const std::string& s, const char delimiter)
 {
     std::vector<std::string> v;
     std::istringstream f(s);
@@ -84,19 +84,7 @@ ImageBuffer::~ImageBuffer()
         stbi_image_free(buffer);
 }
 
-// Might be replaced with IrrlichtBAW's file system API.
-int Exists(const char* file)
-{
-#if defined(_WIN32)
-    DWORD attribute = GetFileAttributes(file);
-    return (attribute != INVALID_FILE_ATTRIBUTES && !(attribute & FILE_ATTRIBUTE_DIRECTORY));
-#elif defined(__linux__)
-    struct stat s;
-    return stat(file, &s) == 0;
-#endif
-}
-
-void Replace(std::string& str, const std::string& from, const std::string& to)
+void replace(std::string& str, const std::string& from, const std::string& to)
 {
     size_t start = 0;
     while ((start = str.find(from, start)) != std::string::npos) {

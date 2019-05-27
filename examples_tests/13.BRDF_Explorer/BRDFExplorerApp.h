@@ -88,7 +88,7 @@ class BRDFExplorerApp {
         void initDropdown();
         void initTooltip();
 
-        void updateTooltip(const char* name, const char* text);
+        void updateTooltip(const std::string& name, const std::string& text);
         void eventAOTextureBrowse(const ::CEGUI::EventArgs&);
         void eventAOTextureBrowse_EditBox(const ::CEGUI::EventArgs&);
         void eventBumpTextureBrowse(const ::CEGUI::EventArgs&);
@@ -103,10 +103,14 @@ class BRDFExplorerApp {
             "Image (*.jpg, *.jpeg, *.png, *.bmp, *.tga, *.dds, *.gif)",
             "*.jpg *.jpeg *.png *.bmp *.tga *.dds *.gif"
         };
+		
+        // Formatting helper for the texture buttons' tooltip objects.
+        std::string getTextureTooltip(const char* file, int w, int h);
 
         void showErrorMessage(const char* title, const char* message);
 
     private:
+        IrrlichtDevice* Device = nullptr;
         video::IVideoDriver* Driver = nullptr;
         ext::cegui::GUIManager* GUI = nullptr;
         TTextureSlotMap TextureSlotMap;
